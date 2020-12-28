@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\QuestionController;
+use App\Http\Controllers\AnswerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +22,4 @@ Route::get('/', function () {
 Route::get('/questions',[QuestionController::class, 'index']);
 Route::post('/questions',[QuestionController::class, 'create']);
 Route::get('/questions/{question}', [QuestionController::class, 'view']);
+Route::post('/questions/{question}/answers', [AnswerController::class, 'create']);
