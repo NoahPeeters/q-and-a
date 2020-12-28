@@ -131,8 +131,8 @@ return [
     */
 
     'custom' => [
-        'attribute-name' => [
-            'rule-name' => 'custom-message',
+        'question' => [
+            'regex' => 'The :attribute must end with a question mark.',
         ],
     ],
 

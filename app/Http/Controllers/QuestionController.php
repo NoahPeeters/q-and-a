@@ -22,4 +22,15 @@ class QuestionController extends Controller {
         return view('dashboard', compact('questions'))
             ->with('placeholderQuestion', $placeholderQuestion);
     }
+
+    public function create(Request $request) {
+        $this->validate($request, [
+            'question' => ['required', 'min:5', 'regex:/(^.*\?$)/u']
+        ]);
+
+    	$question = new Question();
+    	$question->text = $request->question;
+    	$question->save();
+    	return redirect("/questions/{$question->id}\/"); 
+    }
 }
