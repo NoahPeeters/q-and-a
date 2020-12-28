@@ -33,4 +33,8 @@ class QuestionController extends Controller {
     	$question->save();
     	return redirect("/questions/{$question->id}\/"); 
     }
+
+    public function view(Question $question) {
+        return view('view', compact('question'));
+    }
 }

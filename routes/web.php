@@ -20,3 +20,4 @@ Route::get('/', function () {
 
 Route::get('/questions',[QuestionController::class, 'index']);
 Route::post('/questions',[QuestionController::class, 'create']);
+Route::get('/questions/{question}', [QuestionController::class, 'view']);
