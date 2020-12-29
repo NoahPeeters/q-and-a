@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Arr;
 use App\Models\Question;
 
@@ -15,12 +15,37 @@ class QuestionController extends Controller {
         "I'd like to become vegan, but cheese is tasty. What can I do about this?"
     ];
 
-    public function index() {
-        $questions = Question::orderBy('created_at', 'DESC')->get();
+    public function index(Request $request) {
+        $onlyShowUnanswered = $request->query('unanswered') == 'true';
+
+        $questions = Question::latest();
+
+        if ($onlyShowUnanswered) {
+            $questions = $questions
+                ->whereNotExists(function ($query) {
+                    $query->select(DB::raw(1))
+                            ->from('answers')
+                            ->whereColumn('answers.question_id', 'questions.id');
+                    });
+        }
+        $questions = $questions
+                ->simplePaginate(15)
+                ->appends($request->input());
+
+
         $placeholderQuestion = Arr::random(self::$placeholderQuestions);
 
-        return view('dashboard', compact('questions'))
-            ->with('placeholderQuestion', $placeholderQuestion);
+        $toggleUnansweredURL = $request->fullUrlWithQuery([
+            'unanswered' => $onlyShowUnanswered ? 'false' : 'true',
+            'page' => null
+        ]);
+
+        return view('dashboard', [
+            'placeholderQuestion' => $placeholderQuestion,
+            'questions' => $questions,
+            'toggleUnansweredTitle' => $onlyShowUnanswered ? 'Show all' : 'Show unanswered only',
+            'toggleUnansweredURL' => $toggleUnansweredURL
+        ]);
     }
 
     public function create(Request $request) {
@@ -31,7 +56,7 @@ class QuestionController extends Controller {
     	$question = new Question();
     	$question->text = $request->question;
     	$question->save();
-    	return redirect("/questions/{$question->id}\/"); 
+    	return redirect("/questions/{$question->id}\/");
     }
 
     public function view(Question $question) {

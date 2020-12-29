@@ -16,7 +16,10 @@
         {{ csrf_field() }}
     </form>
 
-    <h2 class="bg-primary p-1 mt-3 text-white">Questions</h2>
+    <h2 class="bg-primary p-1 mt-3 text-white d-flex justify-content-between align-items-center">
+        <span>Questions</span>
+        <a class="btn btn-info btn-sm" href="{{ $toggleUnansweredURL }}">{{ $toggleUnansweredTitle }}</a>
+    </h2>
 
     <ul class="list-unstyled">
     @forelse ($questions as $question)
@@ -28,4 +31,6 @@
         <li>There are no questions, yet.</li>
     @endforelse
     </ul>
+
+    {{ $questions->links() }}
 @stop
